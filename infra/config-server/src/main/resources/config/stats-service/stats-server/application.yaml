@@ -1,0 +1,31 @@
+server:
+  port: 0
+
+logging:
+  level:
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: INFO
+    org.springframework.orm.jpa.JpaTransactionManager: INFO
+
+spring:
+  application:
+    name: stats-server
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6543/stats-db
+    username: sdb
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+
+hibernate:
+  jdbc:
+    time_zone: UTC
