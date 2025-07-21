@@ -93,7 +93,7 @@
                             <path>
                                 <groupId>org.mapstruct</groupId>
                                 <artifactId>mapstruct-processor</artifactId>
-                                <version>1.6.0.Beta1</version>
+                                <version>1.6.2</version>
                             </path>
                         </annotationProcessorPaths>
                         <compilerArgs>
