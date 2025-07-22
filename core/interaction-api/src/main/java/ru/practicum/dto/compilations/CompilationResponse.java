@@ -1,11 +1,8 @@
 package ru.practicum.dto.compilations;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.dto.event.EventShortDto;
 
 import java.util.Set;
 
@@ -13,7 +10,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompilationResponse {
     Long id;
     String title;

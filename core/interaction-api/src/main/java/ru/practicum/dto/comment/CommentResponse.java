@@ -2,8 +2,8 @@ package ru.practicum.dto.comment;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.user.dto.UserResponse;
+import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.dto.user.UserResponse;
 
 import java.time.LocalDateTime;
 

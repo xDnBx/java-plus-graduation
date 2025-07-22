@@ -1,14 +1,10 @@
 package ru.practicum.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.user.dto.UserResponse;
+import ru.practicum.dto.category.CategoryDto;
+import ru.practicum.dto.user.UserResponse;
 
 import java.time.LocalDateTime;
 

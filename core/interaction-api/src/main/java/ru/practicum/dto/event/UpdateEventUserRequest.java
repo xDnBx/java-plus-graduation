@@ -3,14 +3,10 @@ package ru.practicum.dto.event;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.event.model.enums.EventStateAction;
-import ru.practicum.event.validation.EventDateTime;
+import ru.practicum.dto.event.enums.EventStateAction;
+import ru.practicum.dto.event.validation.EventDateTime;
 
 import java.time.LocalDateTime;
 

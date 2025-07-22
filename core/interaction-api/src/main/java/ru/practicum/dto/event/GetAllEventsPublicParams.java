@@ -1,12 +1,9 @@
 package ru.practicum.dto.event;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.event.model.enums.SortType;
+import ru.practicum.dto.event.enums.SortType;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -15,7 +12,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class GetAllEventsPublicParams {
     String text;
     Set<Long> categories;
