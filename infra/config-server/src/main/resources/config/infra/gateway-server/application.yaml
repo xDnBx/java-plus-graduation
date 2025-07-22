@@ -8,5 +8,14 @@ spring:
           predicates:
             - Path=/**
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+
 server:
   port: 8080
