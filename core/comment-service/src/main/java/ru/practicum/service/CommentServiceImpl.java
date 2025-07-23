@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.dao.CommentRepository;
+import ru.practicum.repository.CommentRepository;
 import ru.practicum.comment.dto.CommentResponse;
 import ru.practicum.comment.dto.MergeCommentRequest;
 import ru.practicum.mapper.CommentMapper;

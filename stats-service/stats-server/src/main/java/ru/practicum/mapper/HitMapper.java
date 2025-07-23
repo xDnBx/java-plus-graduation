@@ -1,7 +1,7 @@
 package ru.practicum.mapper;
 
-import dto.HitRequest;
 import org.mapstruct.Mapper;
+import ru.practicum.dto.stats.HitRequest;
 import ru.practicum.model.Hit;
 
 @Mapper

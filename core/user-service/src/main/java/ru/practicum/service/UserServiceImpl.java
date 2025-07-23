@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.error.model.NotFoundException;
-import ru.practicum.dao.UserRepository;
+import ru.practicum.repository.UserRepository;
 import ru.practicum.user.dto.CreateUserRequest;
 import ru.practicum.user.dto.UserResponse;
 import ru.practicum.mapper.UserMapper;

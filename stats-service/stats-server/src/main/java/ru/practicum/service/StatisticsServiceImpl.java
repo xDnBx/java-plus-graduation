@@ -1,21 +1,22 @@
 package ru.practicum.service;
 
-import dto.GetResponse;
-import dto.HitRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.dao.HitRepository;
+import ru.practicum.dto.stats.GetResponse;
+import ru.practicum.dto.stats.HitRequest;
 import ru.practicum.mapper.HitMapper;
 import ru.practicum.model.Hit;
+import ru.practicum.repository.HitRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatisticsServiceImpl implements StatisticsService {
     final HitMapper hitMapper;
     final HitRepository hitRepository;

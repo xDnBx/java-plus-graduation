@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.dao.EventRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.enums.EventState;
-import ru.practicum.dao.RequestRepository;
+import ru.practicum.repository.RequestRepository;
 import ru.practicum.request.dto.RequestDto;
 import ru.practicum.mapper.RequestMapper;
 import ru.practicum.model.Request;

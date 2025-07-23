@@ -1,13 +1,13 @@
-package ru.practicum;
+package ru.practicum.feign;
 
-import dto.GetResponse;
-import dto.HitRequest;
 import feign.FeignException;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.dto.stats.GetResponse;
+import ru.practicum.dto.stats.HitRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +21,7 @@ public interface StatsClient {
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
     List<GetResponse> getStatistics(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                          @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                                          @RequestParam(required = false) List<String> uris,
-                                          @RequestParam(defaultValue = "false") boolean unique) throws FeignException;
+                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                    @RequestParam(required = false) List<String> uris,
+                                    @RequestParam(defaultValue = "false") boolean unique) throws FeignException;
 }
