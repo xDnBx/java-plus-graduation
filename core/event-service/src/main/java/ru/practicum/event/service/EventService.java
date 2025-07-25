@@ -1,7 +1,8 @@
 package ru.practicum.event.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import ru.practicum.request.dto.RequestDto;
+import ru.practicum.dto.event.*;
+import ru.practicum.dto.request.RequestDto;
 
 import java.util.Collection;
 
@@ -17,6 +18,8 @@ public interface EventService {
     EventFullDto createEvent(Long userId, NewEventDto newEventDto);
 
     EventFullDto getEventById(Long userId, Long eventId);
+
+    EventFullDto getEventByIdFeign(Long eventId);
 
     EventFullDto getEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest);
 

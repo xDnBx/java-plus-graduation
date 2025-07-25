@@ -1,5 +1,6 @@
 package ru.practicum.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -8,12 +9,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.error.model.NotFoundException;
-import ru.practicum.repository.UserRepository;
-import ru.practicum.user.dto.CreateUserRequest;
-import ru.practicum.user.dto.UserResponse;
+import ru.practicum.dto.user.CreateUserRequest;
+import ru.practicum.dto.user.UserDto;
+import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.UserMapper;
 import ru.practicum.model.User;
+import ru.practicum.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,22 +23,22 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserServiceImpl implements UserService {
     final UserMapper userMapper;
     final UserRepository userRepository;
 
     @Override
-    public UserResponse createUser(CreateUserRequest createUserRequest) {
-        User user = userMapper.requestToUser(createUserRequest);
-        UserResponse userResponse = userMapper.userToResponse(userRepository.save(user));
-        log.info("User with id={} was created", userResponse.getId());
-        return userResponse;
+    public UserDto createUser(CreateUserRequest createUserRequest) {
+        User user = userMapper.toUser(createUserRequest);
+        UserDto userDto = userMapper.toDto(userRepository.save(user));
+        log.info("User with id = {} was created", userDto.getId());
+        return userDto;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<UserResponse> getUsers(List<Long> userIds, int from, int size) {
+    public Collection<UserDto> getUsers(List<Long> userIds, int from, int size) {
         int pageNumber = from / size;
         Pageable pageable = PageRequest.of(pageNumber, size);
 
@@ -49,15 +50,22 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("Get users with {ids, from, size} = ({}, {}, {})", userIds, from, size);
-        return page.getContent().stream().map(userMapper::userToResponse).toList();
+        return page.getContent().stream().map(userMapper::toDto).toList();
     }
 
     @Override
     public void deleteUserById(Long userId) {
         if (userRepository.deleteUserById(userId).isPresent()) {
-            log.info("User with id={} was deleted", userId);
+            log.info("User with id = {} was deleted", userId);
         } else {
-            throw new NotFoundException(String.format("User with id=%d not found", userId));
+            throw new NotFoundException(String.format("User with id = %d not found", userId));
         }
+    }
+
+    @Override
+    public UserDto getUserById(Long userId) {
+        log.info("Get user with id = {}", userId);
+        return userMapper.toDto(userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id = %d not found", userId))));
     }
 }

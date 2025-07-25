@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.category.model.Category;
-import ru.practicum.event.model.enums.EventState;
-import ru.practicum.user.model.User;
+import ru.practicum.dto.event.enums.EventState;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +26,7 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id")
-    User initiator;
+    Long initiatorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")

@@ -3,27 +3,15 @@ package ru.practicum.event.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.EventRequestStatusUpdateRequest;
-import ru.practicum.event.dto.EventRequestStatusUpdateResult;
-import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.event.dto.NewEventDto;
-import ru.practicum.event.dto.UpdateEventUserRequest;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.dto.event.*;
+import ru.practicum.dto.request.RequestDto;
 import ru.practicum.event.service.EventService;
-import ru.practicum.request.dto.RequestDto;
 
 import java.util.Collection;
 
@@ -31,7 +19,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users/{userId}/events")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PrivateEventController {
     final EventService eventService;
 
@@ -39,17 +27,20 @@ public class PrivateEventController {
     public Collection<EventShortDto> getAllEvents(@PathVariable Long userId,
                                                   @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                   @Positive @RequestParam(defaultValue = "10") Integer size) {
+        log.info("Get all events for user with id = {}", userId);
         return eventService.getAllEvents(userId, from, size);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto newEventDto) {
+        log.info("Create event for user with id = {}", userId);
         return eventService.createEvent(userId, newEventDto);
     }
 
     @GetMapping("/{eventId}")
     public EventFullDto getEventById(@PathVariable Long userId, @PathVariable Long eventId) {
+        log.info("Get event with id = {} for user with id = {}", eventId, userId);
         return eventService.getEventById(userId, eventId);
     }
 
@@ -57,11 +48,13 @@ public class PrivateEventController {
     public EventFullDto updateEvent(@PathVariable Long userId,
                                     @PathVariable Long eventId,
                                     @Valid @RequestBody UpdateEventUserRequest updateRequest) {
+        log.info("Update event with id = {} for user with id = {}", eventId, userId);
         return eventService.updateEvent(userId, eventId, updateRequest);
     }
 
     @GetMapping("/{eventId}/requests")
     public Collection<RequestDto> getRequests(@PathVariable Long userId, @PathVariable Long eventId) {
+        log.info("Get requests for event with id = {} for user with id = {}", eventId, userId);
         return eventService.getRequests(userId, eventId);
     }
 
@@ -69,6 +62,7 @@ public class PrivateEventController {
     public EventRequestStatusUpdateResult updateRequest(@PathVariable Long userId,
                                                         @PathVariable Long eventId,
                                                         @Valid @RequestBody EventRequestStatusUpdateRequest updateRequest) {
+        log.info("Update request for event with id = {} for user with id = {}", eventId, userId);
         return eventService.updateRequest(userId, eventId, updateRequest);
     }
 }

@@ -3,8 +3,8 @@ package ru.practicum.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+import ru.practicum.dto.request.enums.RequestStatus;
 import ru.practicum.model.Request;
-import ru.practicum.request.model.enums.RequestStatus;
 
 import java.util.List;
 import java.util.Set;

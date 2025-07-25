@@ -276,4 +276,17 @@ public class ErrorHandler {
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .build();
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleServiceUnavailableException(ServiceUnavailableException e) {
+        String reasonMessage = "Service unavailable";
+        log.error("BAD_REQUEST", e);
+        return ErrorResponse.builder()
+                .errors(List.of(e.getMessage()))
+                .message(e.getMessage())
+                .reason(reasonMessage)
+                .status(HttpStatus.BAD_REQUEST.toString())
+                .build();
+    }
 }

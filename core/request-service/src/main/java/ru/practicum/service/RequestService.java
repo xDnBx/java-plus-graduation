@@ -2,7 +2,7 @@ package ru.practicum.service;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.practicum.request.dto.RequestDto;
+import ru.practicum.dto.request.RequestDto;
 
 import java.util.Collection;
 

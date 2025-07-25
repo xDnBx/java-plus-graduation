@@ -1,15 +1,14 @@
 package ru.practicum.controller;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import ru.practicum.user.dto.CreateUserRequest;
-import ru.practicum.user.dto.UserResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.dto.user.CreateUserRequest;
+import ru.practicum.dto.user.UserDto;
+import ru.practicum.feign.UserClient;
 import ru.practicum.service.UserService;
 
 import java.util.Collection;
@@ -19,27 +18,31 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/users")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class AdminUserController {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class AdminUserController implements UserClient {
     final UserService userService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+    @Override
+    public UserDto createUser(CreateUserRequest createUserRequest) {
+        log.info("Request to create user = {}", createUserRequest);
         return userService.createUser(createUserRequest);
     }
 
-    @DeleteMapping("/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable long userId) {
+    @Override
+    public void deleteUser(Long userId) {
+        log.info("Request to delete user with id = {}", userId);
         userService.deleteUserById(userId);
     }
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public Collection<UserResponse> getUsers(@RequestParam(required = false) List<Long> ids,
-                                             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                             @Positive @RequestParam(defaultValue = "10") Integer size) {
+    @Override
+    public Collection<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
+        log.info("Request to get users with ids = {}, from = {}, size = {}", ids, from, size);
         return userService.getUsers(ids, from, size);
+    }
+
+    @Override
+    public UserDto getUserById(Long userId) {
+        log.info("Request to get user with id = {}", userId);
+        return userService.getUserById(userId);
     }
 }

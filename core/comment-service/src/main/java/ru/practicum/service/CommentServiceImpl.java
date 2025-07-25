@@ -15,7 +15,7 @@ import ru.practicum.mapper.CommentMapper;
 import ru.practicum.model.Comment;
 import ru.practicum.error.model.NotFoundException;
 import ru.practicum.error.model.PublicationException;
-import ru.practicum.event.dao.EventRepository;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.enums.EventState;
 import ru.practicum.user.dao.UserRepository;

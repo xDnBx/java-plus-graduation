@@ -1,7 +1,5 @@
 package ru.practicum.event.service;
 
-import dto.GetResponse;
-import dto.HitRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -18,23 +16,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.StatsClient;
-import ru.practicum.event.dao.EventRepository;
-import ru.practicum.event.dao.LocationRepository;
+import ru.practicum.dto.event.*;
+import ru.practicum.dto.event.enums.EventState;
+import ru.practicum.dto.event.enums.EventStateAction;
+import ru.practicum.dto.event.enums.SortType;
+import ru.practicum.dto.request.RequestDto;
+import ru.practicum.dto.request.enums.RequestStatus;
+import ru.practicum.dto.stats.GetResponse;
+import ru.practicum.dto.stats.HitRequest;
+import ru.practicum.dto.user.UserDto;
+import ru.practicum.dto.user.UserShortDto;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.Location;
-import ru.practicum.event.model.enums.EventState;
-import ru.practicum.event.model.enums.EventStateAction;
-import ru.practicum.event.model.enums.SortType;
+import ru.practicum.event.repository.EventRepository;
+import ru.practicum.event.repository.LocationRepository;
 import ru.practicum.event.specification.EventFindSpecification;
-import ru.practicum.request.dao.RequestRepository;
-import ru.practicum.request.dto.RequestDto;
-import ru.practicum.request.mapper.RequestMapper;
-import ru.practicum.request.model.Request;
-import ru.practicum.request.model.enums.RequestStatus;
-import ru.practicum.user.dao.UserRepository;
-import ru.practicum.user.model.User;
+import ru.practicum.exception.*;
+import ru.practicum.feign.StatsClient;
+import ru.practicum.feign.UserClient;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -50,7 +50,7 @@ public class EventServiceImpl implements EventService {
     final EventMapper eventMapper;
     final RequestMapper requestMapper;
     final LocationRepository locationRepository;
-    final UserRepository userRepository;
+    final UserClient userClient;
     final EntityManager entityManager;
     final StatsClient statsClient;
 
@@ -315,6 +315,16 @@ public class EventServiceImpl implements EventService {
                 .build();
     }
 
+    @Override
+    public EventFullDto getEventByIdFeign(Long eventId) {
+        Event event = findEventById(eventId);
+        EventFullDto eventFullDto = eventMapper.toFullDto(event);
+        UserDto userDto = userClient.getUserById(event.getInitiatorId());
+        UserShortDto userShortDto = UserShortDto.builder().id(userDto.getId()).name(userDto.getName()).build();
+        eventFullDto.setInitiator(userShortDto);
+        return eventFullDto;
+    }
+
     private Event getVerifiedEvent(Long userId, Long eventId) {
         findUserById(userId);
 
@@ -426,7 +436,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
+        return userClient.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("User with id=%d + not found", userId)));
     }
 

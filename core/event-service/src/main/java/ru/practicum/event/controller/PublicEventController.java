@@ -2,16 +2,17 @@ package ru.practicum.event.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.event.dto.GetAllEventsPublicParams;
-import ru.practicum.event.model.enums.SortType;
+import ru.practicum.dto.event.EventFullDto;
+import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.dto.event.GetAllEventsPublicParams;
+import ru.practicum.dto.event.enums.SortType;
 import ru.practicum.event.service.EventService;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/events")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicEventController {
     final EventService eventService;
 
@@ -39,6 +40,7 @@ public class PublicEventController {
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size,
             HttpServletRequest httpServletRequest) {
+        log.info("Get all public events");
         return eventService.getAllEventsPublic(GetAllEventsPublicParams.builder()
                 .text(text)
                 .categories(categories)
@@ -56,6 +58,7 @@ public class PublicEventController {
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventByIdPublic(@PathVariable Long eventId, HttpServletRequest httpServletRequest) {
+        log.info("Get public event with id: {}", eventId);
         return eventService.getEventByIdPublic(eventId, httpServletRequest);
     }
 }

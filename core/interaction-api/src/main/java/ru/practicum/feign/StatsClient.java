@@ -8,11 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.stats.GetResponse;
 import ru.practicum.dto.stats.HitRequest;
+import ru.practicum.feign.fallback.StatsClientFallback;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@FeignClient(name = "stats-server")
+@FeignClient(name = "stats-server", fallback = StatsClientFallback.class)
 public interface StatsClient {
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)

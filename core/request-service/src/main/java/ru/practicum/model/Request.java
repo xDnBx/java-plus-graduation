@@ -3,9 +3,7 @@ package ru.practicum.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.request.model.enums.RequestStatus;
-import ru.practicum.event.model.Event;
-import ru.practicum.user.model.User;
+import ru.practicum.dto.request.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 
@@ -29,11 +27,11 @@ public class Request {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    Event event;
+    Long eventId;
 
     @ManyToOne
     @JoinColumn(name = "requester_id", nullable = false)
-    User requester;
+    Long requesterId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

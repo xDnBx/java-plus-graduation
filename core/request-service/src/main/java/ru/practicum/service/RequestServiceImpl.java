@@ -1,42 +1,40 @@
 package ru.practicum.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.event.dao.EventRepository;
-import ru.practicum.event.model.Event;
-import ru.practicum.event.model.enums.EventState;
-import ru.practicum.repository.RequestRepository;
-import ru.practicum.request.dto.RequestDto;
+import ru.practicum.dto.event.EventFullDto;
+import ru.practicum.dto.event.enums.EventState;
+import ru.practicum.dto.request.RequestDto;
+import ru.practicum.dto.request.enums.RequestStatus;
+import ru.practicum.exception.*;
+import ru.practicum.feign.EventClient;
+import ru.practicum.feign.UserClient;
 import ru.practicum.mapper.RequestMapper;
 import ru.practicum.model.Request;
-import ru.practicum.request.model.enums.RequestStatus;
-import ru.practicum.user.dao.UserRepository;
-import ru.practicum.user.model.User;
+import ru.practicum.repository.RequestRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RequestServiceImpl implements RequestService {
     final RequestRepository requestRepository;
-    final UserRepository userRepository;
-    final EventRepository eventRepository;
     final RequestMapper requestMapper;
+    final UserClient userClient;
+    final EventClient eventClient;
 
     @Override
     public Collection<RequestDto> getAllUserRequest(Long userId) {
-        userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format("User with id=%d + not found", userId)));
-        Set<Request> requests = requestRepository.findAllByRequesterId(userId);
-        log.info("GET requests by userId = {}",userId);
-        return requests.stream().map(requestMapper::toRequestDto).toList();
+        userClient.getUserById(userId);
+        log.info("Get requests by userId = {}", userId);
+        return requestRepository.findAllByRequesterId(userId).stream().map(requestMapper::toDto).toList();
     }
 
     @Override
@@ -45,10 +43,7 @@ public class RequestServiceImpl implements RequestService {
         if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
             throw new DuplicateRequestException("Request can be only one");
         }
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException(String.format("Event with id = %s, not found", eventId)));
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format("User with id=%d + not found", userId)));
+        EventFullDto event = eventClient.getEventByIdFeign(eventId);
         RequestStatus status = RequestStatus.PENDING;
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
@@ -65,28 +60,27 @@ public class RequestServiceImpl implements RequestService {
             status = RequestStatus.CONFIRMED;
         }
 
-        if (event.getInitiator().getId().equals(user.getId())) {
+        if (event.getInitiator().getId().equals(userId)) {
             throw new InitiatorRequestException("Initiator can't submit a request for event");
         }
 
         Request request = Request.builder()
                 .created(LocalDateTime.now())
-                .requester(user)
-                .event(event)
+                .requesterId(userId)
+                .eventId(event.getId())
                 .status(status)
                 .build();
-        log.info("POST request body = {}",request);
-        return requestMapper.toRequestDto(requestRepository.save(request));
+        log.info("Post request body = {}", request);
+        return requestMapper.toDto(requestRepository.save(request));
     }
 
     @Override
     public RequestDto cancelRequest(Long userId, Long requestId) {
-        userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format("User with id=%d + not found", userId)));
+        userClient.getUserById(userId);
         Request request = requestRepository.findById(requestId).orElseThrow(() ->
                 new NotFoundException("Request not found"));
         request.setStatus(RequestStatus.CANCELED);
         log.info("Cancel request by requestId = {} and userId = {}",requestId,userId);
-        return requestMapper.toRequestDto(requestRepository.save(request));
+        return requestMapper.toDto(requestRepository.save(request));
     }
 }

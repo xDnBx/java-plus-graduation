@@ -4,9 +4,9 @@ import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import ru.practicum.dto.event.enums.EventState;
+import ru.practicum.dto.event.enums.SortType;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.enums.EventState;
-import ru.practicum.event.model.enums.SortType;
 
 import java.time.LocalDateTime;
 import java.util.Set;
