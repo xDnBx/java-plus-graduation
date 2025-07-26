@@ -1,4 +1,4 @@
-package ru.practicum.category.dao;
+package ru.practicum.category.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

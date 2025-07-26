@@ -1,6 +1,7 @@
 package ru.practicum.category.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @ToString
 @Table(name = "categories")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category {
     @Id
     @Column(name = "id")

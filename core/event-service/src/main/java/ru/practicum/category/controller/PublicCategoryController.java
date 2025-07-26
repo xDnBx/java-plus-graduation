@@ -2,13 +2,14 @@ package ru.practicum.category.controller;
 
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.service.CategoryService;
+import ru.practicum.dto.category.CategoryDto;
 
 import java.util.Collection;
 
@@ -16,7 +17,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/categories")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicCategoryController {
     final CategoryService categoryService;
 

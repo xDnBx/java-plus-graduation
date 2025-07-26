@@ -1,12 +1,13 @@
 package ru.practicum.compilations.controller;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.compilations.dto.CompilationResponse;
 import ru.practicum.compilations.service.CompilationService;
+import ru.practicum.dto.compilations.CompilationResponse;
 
 import java.util.Collection;
 
@@ -14,7 +15,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/compilations")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicCompilationController {
     final CompilationService compilationService;
 

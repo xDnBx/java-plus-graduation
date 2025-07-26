@@ -2,13 +2,13 @@ package ru.practicum.category.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
+import ru.practicum.dto.category.CategoryDto;
 
 @Mapper
 public interface CategoryMapper {
     @Mapping(target = "id", ignore = true)
-    Category requestToCategory(CategoryDto categoryDto);
+    Category toCategory(CategoryDto categoryDto);
 
-    CategoryDto categoryToResponse(Category category);
+    CategoryDto toDto(Category category);
 }

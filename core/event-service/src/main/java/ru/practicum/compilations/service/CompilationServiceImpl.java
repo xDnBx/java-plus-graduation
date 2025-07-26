@@ -1,5 +1,6 @@
 package ru.practicum.compilations.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -9,14 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.compilations.dao.CompilationRepository;
-import ru.practicum.compilations.dto.CompilationDto;
-import ru.practicum.compilations.dto.CompilationResponse;
 import ru.practicum.compilations.mapper.CompilationMapper;
 import ru.practicum.compilations.model.Compilation;
+import ru.practicum.compilations.repository.CompilationRepository;
 import ru.practicum.compilations.specification.CompilationFindSpecification;
-import ru.practicum.error.model.NotFoundException;
+import ru.practicum.dto.compilations.CompilationDto;
+import ru.practicum.dto.compilations.CompilationResponse;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.exception.NotFoundException;
 
 import java.util.Collection;
 
@@ -24,7 +25,7 @@ import java.util.Collection;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompilationServiceImpl implements CompilationService {
     final CompilationRepository compilationRepository;
     final CompilationMapper compilationMapper;
@@ -32,10 +33,10 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationResponse create(CompilationDto compilationDto) {
-        Compilation compilation = compilationMapper.createRequestToCompilation(
+        Compilation compilation = compilationMapper.toCompilation(
                 compilationDto,
                 eventRepository.findAllByIdIn(compilationDto.getEvents()));
-        CompilationResponse response = compilationMapper.compilationToResponse(compilationRepository.save(compilation));
+        CompilationResponse response = compilationMapper.toResponse(compilationRepository.save(compilation));
         log.info("Compilation with id={} was created", response.getId());
         return response;
     }
@@ -45,7 +46,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationResponse getCompilationById(Long compId) {
         Compilation compilation = findCompilationById(compId);
         log.info("Compilation with id={} was found", compilation.getId());
-        return compilationMapper.compilationToResponse(compilation);
+        return compilationMapper.toResponse(compilation);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class CompilationServiceImpl implements CompilationService {
 
         log.info("Get compilations with {from, size, pinned}={},{},{}", from, size, pinned);
 
-        return page.getContent().stream().map(compilationMapper::compilationToResponse).toList();
+        return page.getContent().stream().map(compilationMapper::toResponse).toList();
     }
 
     @Override
@@ -74,11 +75,11 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationResponse update(Long compilationId, CompilationDto updateCompilationRequest) {
         Compilation compilation = findCompilationById(compilationId);
-        compilationMapper.compilationUpdateRequest(
+        compilationMapper.updateRequest(
                 updateCompilationRequest,
                 compilation,
         eventRepository.findAllByIdIn(updateCompilationRequest.getEvents()));
-        CompilationResponse response = compilationMapper.compilationToResponse(
+        CompilationResponse response = compilationMapper.toResponse(
                 compilationRepository.save(compilation));
         log.info("Compilation with id={} was updated", response.getId());
         return response;
