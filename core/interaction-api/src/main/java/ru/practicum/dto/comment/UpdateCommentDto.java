@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MergeCommentRequest {
+public class UpdateCommentDto {
     @NotNull(message = "Event id is required")
     Long eventId;
 

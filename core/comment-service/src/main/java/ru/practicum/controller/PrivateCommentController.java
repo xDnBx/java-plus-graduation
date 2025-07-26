@@ -1,12 +1,13 @@
 package ru.practicum.controller;
 
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.comment.dto.CommentResponse;
-import ru.practicum.comment.dto.MergeCommentRequest;
+import ru.practicum.dto.comment.CommentDto;
+import ru.practicum.dto.comment.UpdateCommentDto;
 import ru.practicum.service.CommentService;
 
 import java.util.Collection;
@@ -14,13 +15,13 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users/{userId}/comments")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PrivateCommentController {
     final CommentService commentService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentResponse createComment(@Valid @RequestBody MergeCommentRequest request, @PathVariable Long userId) {
+    public CommentDto createComment(@Valid @RequestBody UpdateCommentDto request, @PathVariable Long userId) {
         return commentService.createComment(request, userId);
     }
 
@@ -32,26 +33,26 @@ public class PrivateCommentController {
 
     @PatchMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentResponse updateComment(@Valid @RequestBody MergeCommentRequest request,
-                                         @PathVariable Long userId,
-                                         @PathVariable Long commentId) {
+    public CommentDto updateComment(@Valid @RequestBody UpdateCommentDto request,
+                                    @PathVariable Long userId,
+                                    @PathVariable Long commentId) {
         return commentService.updateCommentByIdAndAuthorId(commentId, userId, request);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<CommentResponse> getAllCommentsByUser(@PathVariable Long userId,
-                                                            @RequestParam(defaultValue = "0") Integer from,
-                                                            @RequestParam(defaultValue = "10") Integer size) {
+    public Collection<CommentDto> getAllCommentsByUser(@PathVariable Long userId,
+                                                       @RequestParam(defaultValue = "0") Integer from,
+                                                       @RequestParam(defaultValue = "10") Integer size) {
         return commentService.getAllCommentsByUser(userId, from, size);
     }
 
     @GetMapping("events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<CommentResponse> getAllCommentsByEvent(@PathVariable Long eventId,
-                                                             @PathVariable Long userId,
-                                                             @RequestParam(defaultValue = "0") Integer from,
-                                                             @RequestParam(defaultValue = "10") Integer size) {
+    public Collection<CommentDto> getAllCommentsByEvent(@PathVariable Long eventId,
+                                                        @PathVariable Long userId,
+                                                        @RequestParam(defaultValue = "0") Integer from,
+                                                        @RequestParam(defaultValue = "10") Integer size) {
         return commentService.getAllCommentsByUserAndEvent(userId, eventId, from, size);
     }
 }

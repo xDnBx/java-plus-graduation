@@ -1,18 +1,19 @@
 package ru.practicum.controller;
 
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.comment.dto.CommentResponse;
-import ru.practicum.comment.dto.MergeCommentRequest;
+import ru.practicum.dto.comment.CommentDto;
+import ru.practicum.dto.comment.UpdateCommentDto;
 import ru.practicum.service.CommentService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminCommentController {
     final CommentService commentService;
 
@@ -24,8 +25,8 @@ public class AdminCommentController {
 
     @PatchMapping("/comments/{commentId}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentResponse updateComment(@PathVariable Long commentId,
-                                         @Valid @RequestBody MergeCommentRequest mergeCommentRequest) {
-        return commentService.updateCommentById(commentId, mergeCommentRequest);
+    public CommentDto updateComment(@PathVariable Long commentId,
+                                    @Valid @RequestBody UpdateCommentDto updateCommentDto) {
+        return commentService.updateCommentById(commentId, updateCommentDto);
     }
 }

@@ -1,27 +1,26 @@
 package ru.practicum.service;
 
-import jakarta.validation.Valid;
-import ru.practicum.comment.dto.CommentResponse;
-import ru.practicum.comment.dto.MergeCommentRequest;
+import ru.practicum.dto.comment.CommentDto;
+import ru.practicum.dto.comment.UpdateCommentDto;
 
 import java.util.Collection;
 
 public interface CommentService {
-    CommentResponse createComment(MergeCommentRequest mergeCommentRequest, Long userId);
+    CommentDto createComment(UpdateCommentDto updateCommentDto, Long userId);
 
     void deleteCommentByIdAndAuthor(Long commentId, Long userId);
 
-    Collection<CommentResponse> getAllCommentsByUser(Long userId, Integer from, Integer size);
+    Collection<CommentDto> getAllCommentsByUser(Long userId, Integer from, Integer size);
 
     void deleteCommentById(Long commentId);
 
-    Collection<CommentResponse> getAllCommentsByEvent(Long eventId, Integer from, Integer size);
+    Collection<CommentDto> getAllCommentsByEvent(Long eventId, Integer from, Integer size);
 
-    CommentResponse updateCommentByIdAndAuthorId(Long commentId, Long userId, MergeCommentRequest request);
+    CommentDto updateCommentByIdAndAuthorId(Long commentId, Long userId, UpdateCommentDto updateCommentDto);
 
-    CommentResponse updateCommentById(Long commentId, @Valid MergeCommentRequest mergeCommentRequest);
+    CommentDto updateCommentById(Long commentId, UpdateCommentDto updateCommentDto);
 
-    Collection<CommentResponse> getAllCommentsByUserAndEvent(Long userId, Long eventId, Integer from, Integer size);
+    Collection<CommentDto> getAllCommentsByUserAndEvent(Long userId, Long eventId, Integer from, Integer size);
 
-    CommentResponse getCommentById(Long commentId);
+    CommentDto getCommentById(Long commentId);
 }

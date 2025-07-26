@@ -1,25 +1,20 @@
 package ru.practicum.mapper;
 
 import org.mapstruct.*;
-import ru.practicum.comment.dto.CommentResponse;
-import ru.practicum.comment.dto.MergeCommentRequest;
+import ru.practicum.dto.comment.CommentDto;
+import ru.practicum.dto.comment.UpdateCommentDto;
 import ru.practicum.model.Comment;
-import ru.practicum.event.model.Event;
-import ru.practicum.user.model.User;
 
 @Mapper
 public interface CommentMapper {
-    @Mapping(target = "author", source = "user")
-    @Mapping(target = "event", source = "event")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "publishedOn", source = "commentRequest.publishedOn")
-    Comment requestToComment(MergeCommentRequest commentRequest, Event event, User user);
+    Comment toComment(UpdateCommentDto updateCommentDto, Long eventId, Long userId);
 
-    CommentResponse commentToResponse(Comment comment);
+    CommentDto toDto(Comment comment);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "event", source = "event")
     @Mapping(target = "publishedOn", source = "commentRequest.publishedOn")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateComment(MergeCommentRequest commentRequest, Event event, @MappingTarget Comment comment);
+    void updateComment(UpdateCommentDto updateCommentDto, Long eventId, @MappingTarget Comment comment);
 }

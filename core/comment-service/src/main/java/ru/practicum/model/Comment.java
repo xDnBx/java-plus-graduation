@@ -1,12 +1,11 @@
 package ru.practicum.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.event.model.Event;
-import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Table(name = "comments")
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Comment {
     @Id
     @GeneratedValue
@@ -29,12 +28,12 @@ public class Comment {
     LocalDateTime publishedOn;
 
     @ToString.Exclude
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "author_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    User author;
+    Long authorId;
 
     @ToString.Exclude
     @JoinColumn(name = "event_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    Event event;
+    Long eventId;
 }
