@@ -9,8 +9,10 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.event.*;
-import ru.practicum.dto.request.RequestDto;
+import ru.practicum.dto.event.EventFullDto;
+import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.dto.event.NewEventDto;
+import ru.practicum.dto.event.UpdateEventUserRequest;
 import ru.practicum.event.service.EventService;
 
 import java.util.Collection;
@@ -50,19 +52,5 @@ public class PrivateEventController {
                                     @Valid @RequestBody UpdateEventUserRequest updateRequest) {
         log.info("Update event with id = {} for user with id = {}", eventId, userId);
         return eventService.updateEvent(userId, eventId, updateRequest);
-    }
-
-    @GetMapping("/{eventId}/requests")
-    public Collection<RequestDto> getRequests(@PathVariable Long userId, @PathVariable Long eventId) {
-        log.info("Get requests for event with id = {} for user with id = {}", eventId, userId);
-        return eventService.getRequests(userId, eventId);
-    }
-
-    @PatchMapping("/{eventId}/requests")
-    public EventRequestStatusUpdateResult updateRequest(@PathVariable Long userId,
-                                                        @PathVariable Long eventId,
-                                                        @Valid @RequestBody EventRequestStatusUpdateRequest updateRequest) {
-        log.info("Update request for event with id = {} for user with id = {}", eventId, userId);
-        return eventService.updateRequest(userId, eventId, updateRequest);
     }
 }

@@ -21,7 +21,6 @@ import ru.practicum.dto.event.enums.EventState;
 import ru.practicum.dto.event.enums.EventStateAction;
 import ru.practicum.dto.event.enums.SortType;
 import ru.practicum.dto.request.RequestDto;
-import ru.practicum.dto.request.enums.RequestStatus;
 import ru.practicum.dto.stats.GetResponse;
 import ru.practicum.dto.stats.HitRequest;
 import ru.practicum.dto.user.UserDto;
@@ -33,11 +32,13 @@ import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.repository.LocationRepository;
 import ru.practicum.event.specification.EventFindSpecification;
 import ru.practicum.exception.*;
+import ru.practicum.feign.RequestClient;
 import ru.practicum.feign.StatsClient;
 import ru.practicum.feign.UserClient;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,9 +47,8 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventServiceImpl implements EventService {
     final EventRepository eventRepository;
-    final RequestRepository requestRepository;
+    final RequestClient requestClient;
     final EventMapper eventMapper;
-    final RequestMapper requestMapper;
     final LocationRepository locationRepository;
     final UserClient userClient;
     final EntityManager entityManager;
@@ -98,18 +98,22 @@ public class EventServiceImpl implements EventService {
         log.info("Get events with {users, states, categories, rangeStart, rangeEnd, from, size} = ({},{},{},{},{},{},{})",
                 users, size, categories, rangeStart, rangeEnd, from, size);
 
-        List<Request> confirmedRequestsByEventId = requestRepository.findAllByEventIdInAndStatus(
-                page.stream().map(Event::getId).toList(), RequestStatus.CONFIRMED);
-
-        Map<Long, List<Request>> eventIdToConfirmedRequests = confirmedRequestsByEventId.stream()
-                .collect(Collectors.groupingBy(request -> request.getEvent().getId()));
+        Map<Long, List<RequestDto>> eventIdToConfirmedRequests = requestClient.getConfirmedRequests(page.stream()
+                .map(Event::getId).toList());
+        List<Long> initiatorIds = page.stream().map(Event::getInitiatorId).toList();
+        Map<Long, UserDto> usersMap = userClient.getUsers(initiatorIds, 0, initiatorIds.size()).stream()
+                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
 
         return page.stream()
                 .map(event -> {
-                    event.setConfirmedRequests(eventIdToConfirmedRequests.getOrDefault(
+                    EventFullDto eventFullDto = eventMapper.toFullDto(event);
+                    eventFullDto.setConfirmedRequests((long) eventIdToConfirmedRequests.getOrDefault(
                             event.getId(),
                             Collections.emptyList()).size());
-                    return eventMapper.toFullDto(event);
+                    long initiatorId = usersMap.get(event.getInitiatorId()).getId();
+                    String initiatorName = usersMap.get(event.getInitiatorId()).getName();
+                    eventFullDto.setInitiator(UserShortDto.builder().id(initiatorId).name(initiatorName).build());
+                    return eventFullDto;
                 })
                 .toList();
     }
@@ -204,9 +208,9 @@ public class EventServiceImpl implements EventService {
         Location location = findLocationByLatAndLon(newEventDto.getLocation().getLat(),
                 newEventDto.getLocation().getLon());
 
-        User user = findUserById(userId);
+        findUserById(userId);
 
-        event.setInitiator(user);
+        event.setInitiatorId(userId);
         event.setLocation(location);
 
         log.info("Create new event with userId = {}", userId);
@@ -261,61 +265,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<RequestDto> getRequests(Long userId, Long eventId) {
-        getVerifiedEvent(userId, eventId);
-
-        Set<Request> requests = requestRepository.findAllByEventId(eventId);
-
-        return requests.stream().map(requestMapper::toRequestDto).toList();
-    }
-
-    @Override
-    @Transactional
-    public EventRequestStatusUpdateResult updateRequest(Long userId, Long eventId,
-                                                        EventRequestStatusUpdateRequest updateRequest) {
-        Event event = getVerifiedEvent(userId, eventId);
-
-        List<Request> requests = requestRepository.findAllByIdIn(updateRequest.getRequestIds());
-
-        for (Request request : requests) {
-            if (!request.getEvent().getId().equals(eventId)) {
-                throw new NotFoundException("Request with requestId = " + request.getId() + "does not match eventId = " + eventId);
-            }
-        }
-
-        int confirmedCount = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED).size();
-        int size = updateRequest.getRequestIds().size();
-        int confirmedSize = updateRequest.getStatus().equals(RequestStatus.CONFIRMED) ? size : 0;
-
-        if (event.getParticipantLimit() != 0 && confirmedCount + confirmedSize > event.getParticipantLimit()) {
-            throw new TooManyRequestsException("Event limit exceed");
-        }
-
-        List<RequestDto> confirmedRequests = new ArrayList<>();
-        List<RequestDto> rejectedRequests = new ArrayList<>();
-
-        for (Request request : requests) {
-            if (updateRequest.getStatus().equals(RequestStatus.CONFIRMED)) {
-                request.setStatus(RequestStatus.CONFIRMED);
-                confirmedRequests.add(requestMapper.toRequestDto(request));
-            } else if (updateRequest.getStatus().equals(RequestStatus.REJECTED)) {
-                if (request.getStatus().equals(RequestStatus.CONFIRMED)) {
-                    throw new AlreadyConfirmedException("The request cannot be rejected if it is confirmed");
-                }
-                request.setStatus(RequestStatus.REJECTED);
-                rejectedRequests.add(requestMapper.toRequestDto(request));
-            }
-        }
-
-        requestRepository.saveAll(requests);
-
-        return EventRequestStatusUpdateResult.builder()
-                .confirmedRequests(confirmedRequests)
-                .rejectedRequests(rejectedRequests)
-                .build();
-    }
-
-    @Override
     public EventFullDto getEventByIdFeign(Long eventId) {
         Event event = findEventById(eventId);
         EventFullDto eventFullDto = eventMapper.toFullDto(event);
@@ -325,15 +274,9 @@ public class EventServiceImpl implements EventService {
         return eventFullDto;
     }
 
-    private Event getVerifiedEvent(Long userId, Long eventId) {
-        findUserById(userId);
-
-        Event event = findEventById(eventId);
-
-        if (!event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException("The event initiator does not match the user id");
-        }
-        return event;
+    @Override
+    public EventFullDto getEventByUserFeign(Long userId, Long eventId) {
+        return getEventById(userId, eventId);
     }
 
     private void stateChanger(Event event, EventStateAction stateAction) {
@@ -432,12 +375,12 @@ public class EventServiceImpl implements EventService {
 
     private Event findEventByIdAndInitiatorId(Long userId, Long eventId) {
         return eventRepository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow(() -> new NotFoundException(String.format("Event with id=%d and userId=%d not found", eventId, userId)));
+                .orElseThrow(() -> new NotFoundException(String.format("Event with id = %d and userId=%d not found",
+                        eventId, userId)));
     }
 
-    private User findUserById(Long userId) {
-        return userClient.findById(userId).orElseThrow(() ->
-                new NotFoundException(String.format("User with id=%d + not found", userId)));
+    private void findUserById(Long userId) {
+        userClient.getUserById(userId);
     }
 
     private Location findLocationByLatAndLon(Float lat, Float lon) {

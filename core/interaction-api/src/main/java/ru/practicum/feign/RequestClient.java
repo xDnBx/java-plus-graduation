@@ -2,24 +2,16 @@ package ru.practicum.feign;
 
 import feign.FeignException;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.dto.request.RequestDto;
 import ru.practicum.feign.fallback.RequestClientFallback;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-@FeignClient(name = "request-service", path = "/users/{userId}/requests", fallback = RequestClientFallback.class)
+@FeignClient(name = "request-service", path = "/requests/feign", fallback = RequestClientFallback.class)
 public interface RequestClient {
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    Collection<RequestDto> getAllUserRequest(@PathVariable Long userId) throws FeignException;
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    RequestDto createRequest(@PathVariable Long userId, @RequestParam Long eventId) throws FeignException;
-
-    @PatchMapping("{requestId}/cancel")
-    @ResponseStatus(HttpStatus.OK)
-    RequestDto cancelRequest(@PathVariable Long userId, @PathVariable Long requestId) throws FeignException;
+    @GetMapping("/confirmed")
+    Map<Long, List<RequestDto>> getConfirmedRequests(@RequestParam List<Long> eventIds) throws FeignException;
 }

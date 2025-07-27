@@ -27,13 +27,9 @@ public class Comment {
     @Column(name = "published_on", nullable = false)
     LocalDateTime publishedOn;
 
-    @ToString.Exclude
     @JoinColumn(name = "author_id")
-    @ManyToOne(fetch = FetchType.LAZY)
     Long authorId;
 
-    @ToString.Exclude
     @JoinColumn(name = "event_id")
-    @ManyToOne(fetch = FetchType.LAZY)
     Long eventId;
 }

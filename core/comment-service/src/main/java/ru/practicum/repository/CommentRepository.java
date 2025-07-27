@@ -10,15 +10,15 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    long deleteCommentByIdAndAuthor_Id(Long id, Long authorId);
+    long deleteCommentByIdAndAuthorId(Long id, Long authorId);
 
     long deleteCommentById(Long commentId);
 
-    Page<Comment> findAllByAuthor_IdOrderByPublishedOnDesc(Long userId, Pageable pageable);
+    Page<Comment> findAllByAuthorIdOrderByPublishedOnDesc(Long authorId, Pageable pageable);
 
-    Page<Comment> findAllByEvent_IdOrderByPublishedOnDesc(Long eventId, Pageable pageable);
+    Page<Comment> findAllByEventIdOrderByPublishedOnDesc(Long eventId, Pageable pageable);
 
-    Optional<Comment> findByIdAndAuthor_Id(Long commentId, Long authorId);
+    Optional<Comment> findByIdAndAuthorId(Long commentId, Long authorId);
 
-    Page<Comment> findAllByAuthor_IdAndEvent_IdOrderByPublishedOnDesc(Long userId, Long eventId, Pageable pageable);
+    Page<Comment> findAllByAuthorIdAndEventIdOrderByPublishedOnDesc(Long authorId, Long eventId, Pageable pageable);
 }

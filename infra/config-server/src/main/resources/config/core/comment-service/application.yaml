@@ -13,8 +13,8 @@ logging:
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6542/ewm-db
-    username: ewm
+    url: jdbc:postgresql://localhost:6542/comment-db
+    username: cdb
     password: password
   jpa:
     hibernate:
@@ -33,6 +33,3 @@ hibernate:
 logbook:
   format:
     style: http
-
-stats-server:
-  name: stats-server

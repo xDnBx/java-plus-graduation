@@ -12,18 +12,18 @@ import ru.practicum.service.CommentService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin")
+@RequestMapping("/admin/comments/{commentId}")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminCommentController {
     final CommentService commentService;
 
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable Long commentId) {
         commentService.deleteCommentById(commentId);
     }
 
-    @PatchMapping("/comments/{commentId}")
+    @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     public CommentDto updateComment(@PathVariable Long commentId,
                                     @Valid @RequestBody UpdateCommentDto updateCommentDto) {

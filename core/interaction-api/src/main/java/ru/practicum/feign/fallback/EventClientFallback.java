@@ -11,4 +11,9 @@ public class EventClientFallback implements EventClient {
     public EventFullDto getEventByIdFeign(Long eventId) {
         throw new ServiceUnavailableException("Event-Service is unavailable");
     }
+
+    @Override
+    public EventFullDto getEventByUserFeign(Long userId, Long eventId) {
+        throw new ServiceUnavailableException("Event-Service is unavailable");
+    }
 }

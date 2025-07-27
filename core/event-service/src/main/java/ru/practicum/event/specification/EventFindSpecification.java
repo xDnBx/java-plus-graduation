@@ -27,7 +27,7 @@ public class EventFindSpecification {
             if (users == null || users.isEmpty()) {
                 return null;
             }
-            return root.get("initiator").get("id").in(users);
+            return root.get("initiatorId").in(users);
         });
     }
 

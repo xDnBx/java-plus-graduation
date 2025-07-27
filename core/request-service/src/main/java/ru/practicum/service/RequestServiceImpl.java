@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.event.EventFullDto;
+import ru.practicum.dto.event.EventRequestStatusUpdateRequest;
+import ru.practicum.dto.event.EventRequestStatusUpdateResult;
 import ru.practicum.dto.event.enums.EventState;
 import ru.practicum.dto.request.RequestDto;
 import ru.practicum.dto.request.enums.RequestStatus;
@@ -18,7 +20,8 @@ import ru.practicum.model.Request;
 import ru.practicum.repository.RequestRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -82,5 +85,65 @@ public class RequestServiceImpl implements RequestService {
         request.setStatus(RequestStatus.CANCELED);
         log.info("Cancel request by requestId = {} and userId = {}",requestId,userId);
         return requestMapper.toDto(requestRepository.save(request));
+    }
+
+    @Override
+    public Map<Long, List<RequestDto>> getConfirmedRequests(List<Long> eventIds) {
+        List<Request> confirmedRequestsByEventId = requestRepository.findAllByEventIdInAndStatus(eventIds,
+                RequestStatus.CONFIRMED);
+        return confirmedRequestsByEventId.stream()
+                .map(requestMapper::toDto)
+                .collect(Collectors.groupingBy(RequestDto::getEvent));
+    }
+
+    @Override
+    public Collection<RequestDto> getRequests(Long userId, Long eventId) {
+        return requestRepository.findAllByEventId(eventId).stream().map(requestMapper::toDto).toList();
+    }
+
+    @Override
+    @Transactional
+    public EventRequestStatusUpdateResult updateRequest(Long userId, Long eventId,
+                                                        EventRequestStatusUpdateRequest updateRequest) {
+        EventFullDto event = eventClient.getEventByUserFeign(userId, eventId);
+
+        List<Request> requests = requestRepository.findAllByIdIn(updateRequest.getRequestIds());
+
+        for (Request request : requests) {
+            if (!request.getEventId().equals(eventId)) {
+                throw new NotFoundException("Request with requestId = " + request.getId() + "does not match eventId = " + eventId);
+            }
+        }
+
+        int confirmedCount = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED).size();
+        int size = updateRequest.getRequestIds().size();
+        int confirmedSize = updateRequest.getStatus().equals(RequestStatus.CONFIRMED) ? size : 0;
+
+        if (event.getParticipantLimit() != 0 && confirmedCount + confirmedSize > event.getParticipantLimit()) {
+            throw new TooManyRequestsException("Event limit exceed");
+        }
+
+        List<RequestDto> confirmedRequests = new ArrayList<>();
+        List<RequestDto> rejectedRequests = new ArrayList<>();
+
+        for (Request request : requests) {
+            if (updateRequest.getStatus().equals(RequestStatus.CONFIRMED)) {
+                request.setStatus(RequestStatus.CONFIRMED);
+                confirmedRequests.add(requestMapper.toDto(request));
+            } else if (updateRequest.getStatus().equals(RequestStatus.REJECTED)) {
+                if (request.getStatus().equals(RequestStatus.CONFIRMED)) {
+                    throw new AlreadyConfirmedException("The request cannot be rejected if it is confirmed");
+                }
+                request.setStatus(RequestStatus.REJECTED);
+                rejectedRequests.add(requestMapper.toDto(request));
+            }
+        }
+
+        requestRepository.saveAll(requests);
+
+        return EventRequestStatusUpdateResult.builder()
+                .confirmedRequests(confirmedRequests)
+                .rejectedRequests(rejectedRequests)
+                .build();
     }
 }

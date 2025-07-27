@@ -10,7 +10,7 @@ public interface EventMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category.id", source = "category")
     @Mapping(target = "createdOn", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "state", expression = "java(ru.practicum.event.model.enums.EventState.PENDING)")
+    @Mapping(target = "state", expression = "java(ru.practicum.dto.event.enums.EventState.PENDING)")
     @Mapping(target = "participantLimit", source = "participantLimit", defaultValue = "0")
     Event toEvent(NewEventDto newEventDto);
 

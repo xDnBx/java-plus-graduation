@@ -23,4 +23,10 @@ public class EventController implements EventClient {
         log.info("Request for event with id = {}", eventId);
         return eventService.getEventByIdFeign(eventId);
     }
+
+    @Override
+    public EventFullDto getEventByUserFeign(Long userId, Long eventId) {
+        log.info("Request for event with id = {} and user with id = {}", eventId, userId);
+        return eventService.getEventByUserFeign(userId, eventId);
+    }
 }

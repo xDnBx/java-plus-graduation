@@ -25,11 +25,9 @@ public class Request {
     @Column(name = "created", nullable = false)
     LocalDateTime created;
 
-    @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     Long eventId;
 
-    @ManyToOne
     @JoinColumn(name = "requester_id", nullable = false)
     Long requesterId;
 

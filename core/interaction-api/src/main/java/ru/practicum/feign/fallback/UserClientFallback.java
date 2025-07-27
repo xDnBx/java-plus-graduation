@@ -15,10 +15,12 @@ public class UserClientFallback implements UserClient {
     public UserDto createUser(CreateUserRequest createUserRequest) {
         throw new ServiceUnavailableException("Client-Service is unavailable");
     }
+
     @Override
     public void deleteUser(Long userId) {
         throw new ServiceUnavailableException("Client-Service is unavailable");
     }
+
     @Override
     public Collection<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
         throw new ServiceUnavailableException("Client-Service is unavailable");

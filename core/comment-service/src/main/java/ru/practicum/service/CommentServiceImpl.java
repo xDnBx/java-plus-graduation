@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteCommentByIdAndAuthor(Long commentId, Long userId) {
-        if (commentRepository.deleteCommentByIdAndAuthor_Id(commentId, userId) != 0) {
+        if (commentRepository.deleteCommentByIdAndAuthorId(commentId, userId) != 0) {
             log.info("Comment with id = {} was deleted by user id = {}", commentId, userId);
         } else {
             throw new NotFoundException(String.format("Comment with id = %d by author id = %d was not found", commentId, userId));
@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto updateCommentByIdAndAuthorId(Long commentId, Long userId, UpdateCommentDto updateCommentDto) {
-        Comment oldComment = commentRepository.findByIdAndAuthor_Id(commentId, userId).orElseThrow(() ->
+        Comment oldComment = commentRepository.findByIdAndAuthorId(commentId, userId).orElseThrow(() ->
                 new NotFoundException(String.format("Comment with id=%d by author id = %d was not found", commentId, userId)));
 
         if (!oldComment.getEventId().equals(updateCommentDto.getEventId())) {
@@ -108,7 +108,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Collection<CommentDto> getAllCommentsByUser(Long userId, Integer from, Integer size) {
         log.info("Get all comments for user id = {}", userId);
-        return commentRepository.findAllByAuthor_IdOrderByPublishedOnDesc(userId, createPageable(from, size))
+        return commentRepository.findAllByAuthorIdOrderByPublishedOnDesc(userId, createPageable(from, size))
                 .stream()
                 .map(commentMapper::toDto)
                 .toList();
@@ -117,7 +117,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Collection<CommentDto> getAllCommentsByEvent(Long eventId, Integer from, Integer size) {
         log.info("Get all comments for event id = {}", eventId);
-        return commentRepository.findAllByEvent_IdOrderByPublishedOnDesc(eventId, createPageable(from, size))
+        return commentRepository.findAllByEventIdOrderByPublishedOnDesc(eventId, createPageable(from, size))
                 .stream()
                 .map(commentMapper::toDto)
                 .toList();
@@ -126,7 +126,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Collection<CommentDto> getAllCommentsByUserAndEvent(Long userId, Long eventId, Integer from, Integer size) {
         log.info("Get all comments for event id = {} and user id = {}", eventId, userId);
-        return commentRepository.findAllByAuthor_IdAndEvent_IdOrderByPublishedOnDesc(userId, eventId, createPageable(from, size))
+        return commentRepository.findAllByAuthorIdAndEventIdOrderByPublishedOnDesc(userId, eventId, createPageable(from, size))
                 .stream()
                 .map(commentMapper::toDto)
                 .toList();

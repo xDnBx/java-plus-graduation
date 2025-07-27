@@ -5,22 +5,13 @@ import ru.practicum.dto.request.RequestDto;
 import ru.practicum.exception.ServiceUnavailableException;
 import ru.practicum.feign.RequestClient;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class RequestClientFallback implements RequestClient {
     @Override
-    public Collection<RequestDto> getAllUserRequest(Long userId) {
-        throw new ServiceUnavailableException("Request-Service is unavailable");
-    }
-
-    @Override
-    public RequestDto createRequest(Long userId, Long eventId) {
-        throw new ServiceUnavailableException("Request-Service is unavailable");
-    }
-
-    @Override
-    public RequestDto cancelRequest(Long userId, Long requestId) {
+    public Map<Long, List<RequestDto>> getConfirmedRequests(List<Long> eventIds) {
         throw new ServiceUnavailableException("Request-Service is unavailable");
     }
 }
