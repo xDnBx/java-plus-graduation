@@ -9,9 +9,13 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>stats-service</artifactId>
+    <artifactId>stats</artifactId>
     <packaging>pom</packaging>
     <modules>
+        <module>aggregator</module>
+        <module>analyzer</module>
+        <module>collector</module>
+        <module>serialization</module>
         <module>stats-server</module>
     </modules>
 </project>
