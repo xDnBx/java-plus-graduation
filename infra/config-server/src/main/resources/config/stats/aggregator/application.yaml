@@ -1,12 +1,14 @@
-server:
-  port: 0
-grpc:
-  server:
-    port: 0
-
 kafka:
   bootstrap-servers: localhost:9092
-  topic: stats.user-actions.v1
+  action-topic: stats.user-actions.v1
+  similarity-topic: stats.events-similarity.v1
+  auto-commit: false
+  group-id: action-group
+
+user-action:
+  view: 0.4
+  register: 0.8
+  like: 1.0
 
 logbook:
   format:
