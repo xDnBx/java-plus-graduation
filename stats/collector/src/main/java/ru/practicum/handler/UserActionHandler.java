@@ -3,6 +3,7 @@ package ru.practicum.handler;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.avro.ActionTypeAvro;
@@ -13,6 +14,7 @@ import ru.practicum.kafka.KafkaProducerService;
 
 import java.time.Instant;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -31,6 +33,7 @@ public class UserActionHandler {
                 .setTimestamp(timestamp)
                 .build();
         kafkaProducer.send(avro, proto.getEventId(), timestamp, topic);
+        log.info("Событие {} успешно отправлено в топик {}", avro, topic);
     }
 
     private ActionTypeAvro getActionTypeAvro(ActionTypeProto actionType) {

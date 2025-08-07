@@ -50,7 +50,7 @@ public class AggregationStarter {
                         log.info("Обработка действия пользователя = {}", action);
                         userActionService.updateSimilarity(action)
                                 .forEach(similarity -> producer.send(similarity, similarityTopic));
-                        log.info("Событие от пользователя {} обработано", action);
+                        log.info("Событие от пользователя = {} обработано", action);
                     }
                     log.info("Выполнение фиксации смещений");
                     consumer.commitSync();
