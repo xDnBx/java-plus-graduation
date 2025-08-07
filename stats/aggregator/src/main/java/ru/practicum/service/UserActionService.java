@@ -40,12 +40,7 @@ public class UserActionService {
 
         List<EventSimilarityAvro> result = new ArrayList<>();
         if (newWeight > oldWeight) {
-            double oldSum = eventWeightSums.getOrDefault(eventId, 0.0);
-            double newSum = oldSum - oldWeight + newWeight;
-
-            userActions.put(userId, newWeight);
-            eventWeightSums.put(eventId, newSum);
-            log.info("Обновили вес для события с id = {}: {}", eventId, eventWeightSums.get(eventId));
+            updateUserAction(userId, eventId, oldWeight, newWeight, userActions);
         } else {
             log.info("Вес не изменился для события с id = {}", eventId);
             return result;
@@ -72,6 +67,16 @@ public class UserActionService {
             case REGISTER -> registerAction;
             case LIKE -> likeAction;
         };
+    }
+
+    private void updateUserAction(long userId, long eventId, double oldWeight, double newWeight,
+                                  Map<Long, Double> userActions) {
+        double oldSum = eventWeightSums.getOrDefault(eventId, 0.0);
+        double newSum = oldSum - oldWeight + newWeight;
+
+        userActions.put(userId, newWeight);
+        eventWeightSums.put(eventId, newSum);
+        log.info("Обновили вес для события с id = {}: {}", eventId, eventWeightSums.get(eventId));
     }
 
     private Double updateMinWeightSums(long userId, long eventId, long anotherEventId, double oldWeight,

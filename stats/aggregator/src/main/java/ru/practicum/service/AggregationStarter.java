@@ -22,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AggregationStarter {
-
     final KafkaConsumerService consumer;
     final KafkaProducerService producer;
     final UserActionService userActionService;
