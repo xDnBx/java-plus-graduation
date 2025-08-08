@@ -37,7 +37,7 @@ public class UserActionProcessor implements Runnable {
 
             while (true) {
                 log.info("Ожидание сообщений...");
-                ConsumerRecords<Long, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(1000));
+                ConsumerRecords<Long, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(5000));
                 log.info("Получено {} сообщений", records.count());
 
                 if (!records.isEmpty()) {
@@ -48,7 +48,7 @@ public class UserActionProcessor implements Runnable {
                         log.info("Действие пользователя = {} обработано", avro);
                     }
                     log.info("Выполнение фиксации смещений");
-                    consumer.commitSync();
+                    consumer.commitAsync();
                 }
             }
         } catch (WakeupException ignored) {
@@ -58,7 +58,7 @@ public class UserActionProcessor implements Runnable {
         } finally {
             try {
                 log.info("Фиксация смещений");
-                consumer.commitSync();
+                consumer.commitAsync();
             } catch (Exception e) {
                 log.error("Ошибка во время сброса данных", e);
             } finally {

@@ -52,7 +52,7 @@ public class AggregationStarter {
                         log.info("Событие от пользователя = {} обработано", action);
                     }
                     log.info("Выполнение фиксации смещений");
-                    consumer.commitSync();
+                    consumer.commitAsync();
                 }
             }
         } catch (WakeupException ignored) {
@@ -64,7 +64,7 @@ public class AggregationStarter {
                 log.info("Сбрасывание всех данных в буфере");
                 producer.flush();
                 log.info("Фиксация смещений");
-                consumer.commitSync();
+                consumer.commitAsync();
             } catch (Exception e) {
                 log.error("Ошибка во время сброса данных", e);
             } finally {

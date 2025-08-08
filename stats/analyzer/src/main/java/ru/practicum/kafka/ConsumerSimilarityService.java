@@ -41,8 +41,8 @@ public class ConsumerSimilarityService implements AutoCloseable {
         consumer.subscribe(topics);
     }
 
-    public void commitSync() {
-        consumer.commitSync();
+    public void commitAsync() {
+        consumer.commitAsync();
     }
 
     public void wakeup() {

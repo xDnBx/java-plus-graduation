@@ -3,21 +3,37 @@ grpc:
     port: 0
 
 spring:
-  application:
-    name: analyzer
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6555/smarthome
-    username: smarthome
-    password: smarthome
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6538/analyzer-db
+    username: adb
+    password: password
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
-    show-sql: true
+  sql:
+    init:
+      mode: always
+
+hibernate:
+  jdbc:
+    time_zone: UTC
+
+logbook:
+  format:
+    style: http
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: INFO
+    org.springframework.orm.jpa.JpaTransactionManager: INFO
+    org.zalando.logbook: TRACE
 
 user-action:
   view: 0.4
