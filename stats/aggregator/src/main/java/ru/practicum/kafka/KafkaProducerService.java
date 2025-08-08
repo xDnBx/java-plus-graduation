@@ -18,7 +18,6 @@ import java.util.Properties;
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KafkaProducerService implements AutoCloseable {
-
     final KafkaProducer<Long, SpecificRecordBase> producer;
 
     public KafkaProducerService(@Value("${kafka.bootstrap-servers}") String bootstrapServers) {

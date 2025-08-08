@@ -21,10 +21,13 @@ public class UserActionService {
     final Map<Long, Map<Long, Double>> eventActions = new HashMap<>();
     final Map<Long, Double> eventWeightSums = new HashMap<>();
     final Map<Long, Map<Long, Double>> eventMinWeightSums = new HashMap<>();
+
     @Value("${user-action.view}")
     Double viewAction;
+
     @Value("${user-action.register}")
     Double registerAction;
+
     @Value("${user-action.like}")
     Double likeAction;
 
@@ -81,6 +84,7 @@ public class UserActionService {
 
     private Double updateMinWeightSums(long userId, long eventId, long anotherEventId, double oldWeight,
                                        double newWeight) {
+        log.info("Обновляем минимальные веса для событий с id = {} и {}", eventId, anotherEventId);
         long newEventId = Math.min(eventId, anotherEventId);
         long newAnotherEventId = Math.max(eventId, anotherEventId);
 
@@ -103,6 +107,7 @@ public class UserActionService {
     }
 
     private Double calculateSimilarity(long eventId, long anotherEventId, double newMinSum) {
+        log.info("Рассчитываем схожесть событий с id = {} и {}", eventId, anotherEventId);
         double sumEvent = eventWeightSums.getOrDefault(eventId, 0.0);
         double sumAnotherEvent = eventWeightSums.getOrDefault(anotherEventId, 0.0);
 

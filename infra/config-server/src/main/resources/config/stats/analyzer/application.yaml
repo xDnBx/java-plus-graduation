@@ -1,0 +1,35 @@
+grpc:
+  server:
+    port: 0
+
+spring:
+  application:
+    name: analyzer
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6555/smarthome
+    username: smarthome
+    password: smarthome
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+user-action:
+  view: 0.4
+  register: 0.8
+  like: 1.0
+
+kafka:
+  bootstrap-servers: localhost:9092
+  group-id:
+    action: analyzer.actions
+    similarity: analyzer.similaritys
+  topics:
+    action: stats.user-actions.v1
+    similarity: stats.events-similarity.v1
+  auto-commit: false

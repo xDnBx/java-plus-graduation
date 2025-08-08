@@ -1,6 +1,6 @@
 package ru.practicum.kafka;
 
-import deserializer.UserActionDeserializer;
+import deserializer.EventSimilarityDeserializer;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -17,18 +17,19 @@ import java.util.Properties;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class KafkaConsumerService implements AutoCloseable {
+public class ConsumerSimilarityService implements AutoCloseable {
     final KafkaConsumer<Long, SpecificRecordBase> consumer;
 
-    public KafkaConsumerService(@Value("${kafka.bootstrap-servers}") String bootstrapServers,
-                                @Value("${kafka.group-id}") String groupId,
-                                @Value("${kafka.auto-commit}") String autoCommit) {
+    public ConsumerSimilarityService(@Value("${kafka.bootstrap-servers}") String bootstrapServers,
+                                     @Value("${kafka.group-id.similarity}") String groupId,
+                                     @Value("${kafka.auto-commit}") String autoCommit) {
         Properties config = new Properties();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, autoCommit);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, UserActionDeserializer.class.getName());
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, EventSimilarityDeserializer.class.getName());
+
         this.consumer = new KafkaConsumer<>(config);
     }
 
