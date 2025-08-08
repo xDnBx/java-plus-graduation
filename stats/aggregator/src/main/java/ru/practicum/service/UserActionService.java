@@ -81,21 +81,20 @@ public class UserActionService {
 
     private Double updateMinWeightSums(long userId, long eventId, long anotherEventId, double oldWeight,
                                        double newWeight) {
-        Map<Long, Double> anotherUserWeights = eventActions.get(anotherEventId);
-        if (anotherUserWeights == null) return 0.0;
-
-        double oldAnotherWeight = anotherUserWeights.getOrDefault(userId, 0.0);
-
-        double oldMin = Math.min(oldWeight, oldAnotherWeight);
-        double newMin = Math.min(newWeight, oldAnotherWeight);
-
         long newEventId = Math.min(eventId, anotherEventId);
         long newAnotherEventId = Math.max(eventId, anotherEventId);
+
+        double oldAnotherWeight = eventActions
+                .getOrDefault(anotherEventId, new HashMap<>())
+                .getOrDefault(userId, 0.0);
+
+        if (oldAnotherWeight == 0.0) return 0.0;
 
         Map<Long, Double> minWeights = eventMinWeightSums.computeIfAbsent(newEventId, v -> new HashMap<>());
         double oldSum = minWeights.getOrDefault(newAnotherEventId, 0.0);
 
-        if (oldMin == newMin) return oldSum;
+        double oldMin = Math.min(oldWeight, oldAnotherWeight);
+        double newMin = Math.min(newWeight, oldAnotherWeight);
 
         double newSum = oldSum - oldMin + newMin;
         minWeights.put(newAnotherEventId, newSum);
@@ -104,14 +103,10 @@ public class UserActionService {
     }
 
     private Double calculateSimilarity(long eventId, long anotherEventId, double newMinSum) {
-        if (newMinSum == 0) return 0.0;
-
         double sumEvent = eventWeightSums.getOrDefault(eventId, 0.0);
         double sumAnotherEvent = eventWeightSums.getOrDefault(anotherEventId, 0.0);
 
-        if (sumEvent == 0 || sumAnotherEvent == 0) return 0.0;
-
-        return newMinSum / (Math.sqrt(sumEvent) * Math.sqrt(sumAnotherEvent));
+        return (sumEvent * sumAnotherEvent > 0) ? newMinSum / (Math.sqrt(sumEvent * sumAnotherEvent)) : 0.0;
     }
 
     private EventSimilarityAvro createAvro(long eventId, long anotherEventId, double similarity, Instant timestamp) {
