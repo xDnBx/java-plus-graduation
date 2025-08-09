@@ -36,11 +36,11 @@ public class SimilarityProcessor {
 
             while (true) {
                 log.info("Ожидание сообщений...");
-                ConsumerRecords<Long, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(5000));
+                ConsumerRecords<String, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(5000));
                 log.info("Получено {} сообщений", records.count());
 
                 if (!records.isEmpty()) {
-                    for (ConsumerRecord<Long, SpecificRecordBase> record : records) {
+                    for (ConsumerRecord<String, SpecificRecordBase> record : records) {
                         EventSimilarityAvro avro = (EventSimilarityAvro) record.value();
                         log.info("Обработка коэффициента схожести = {}", avro);
                         similarityHandler.handle(avro);

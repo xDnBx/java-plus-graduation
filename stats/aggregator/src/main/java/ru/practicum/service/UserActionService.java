@@ -22,13 +22,13 @@ public class UserActionService {
     final Map<Long, Double> eventWeightSums = new HashMap<>();
     final Map<Long, Map<Long, Double>> eventMinWeightSums = new HashMap<>();
 
-    @Value("${user-action.view}")
+    @Value("${user-action.view:0.4}")
     Double viewAction;
 
-    @Value("${user-action.register}")
+    @Value("${user-action.register:0.8}")
     Double registerAction;
 
-    @Value("${user-action.like}")
+    @Value("${user-action.like:1.0}")
     Double likeAction;
 
     public List<EventSimilarityAvro> updateSimilarity(UserActionAvro avro) {

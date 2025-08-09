@@ -20,13 +20,13 @@ import java.util.Optional;
 public class UserActionHandler {
     final UserActionRepository userActionRepository;
 
-    @Value("${user-action.view}")
+    @Value("${user-action.view:0.4}")
     Double viewAction;
 
-    @Value("${user-action.register}")
+    @Value("${user-action.register:0.8}")
     Double registerAction;
 
-    @Value("${user-action.like}")
+    @Value("${user-action.like:1.0}")
     Double likeAction;
 
     public void handle(UserActionAvro avro) {

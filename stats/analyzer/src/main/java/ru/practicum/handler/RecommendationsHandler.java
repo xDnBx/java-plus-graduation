@@ -29,13 +29,13 @@ public class RecommendationsHandler {
     final UserActionRepository userActionRepository;
     final SimilarityRepository similarityRepository;
 
-    @Value("${user-action.view}")
+    @Value("${user-action.view:0.4}")
     Double viewAction;
 
-    @Value("${user-action.register}")
+    @Value("${user-action.register:0.8}")
     Double registerAction;
 
-    @Value("${user-action.like}")
+    @Value("${user-action.like:1.0}")
     Double likeAction;
 
     public List<RecommendedEventProto> getRecommendationsForUser(UserPredictionsRequestProto request) {
@@ -132,10 +132,9 @@ public class RecommendationsHandler {
                                                                 Long userId,
                                                                 int limit) {
         // Рассчитываем score для каждого кандидата
-        Map<Long, Double> eventScores = new HashMap<>();
-        for (Long eventId : candidateEventIds) {
-            eventScores.put(eventId, calculateRecommendationScore(eventId, userId, limit));
-        }
+        Map<Long, Double> eventScores = candidateEventIds.stream()
+                .collect(Collectors.toMap(eventId -> eventId,
+                        eventId -> calculateRecommendationScore(eventId, userId, limit)));
 
         // Сортируем по score и ограничиваем количество
         return eventScores.entrySet().stream()
