@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RecommendationHandler {
+public class RecommendationsHandler {
     final UserActionRepository userActionRepository;
     final SimilarityRepository similarityRepository;
 

@@ -25,7 +25,7 @@ public class EventFullDto {
     LocalDateTime eventDate;
 
     UserShortDto initiator;
-    Long views;
+    Double rating;
     Long confirmedRequests;
     String description;
     Integer participantLimit = 0;

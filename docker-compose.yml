@@ -1,21 +1,4 @@
 services:
-  stats-db:
-    image: postgres:16.1
-    container_name: stats-db
-    ports:
-      - "6543:5432"
-    volumes:
-      - ./volumes/postgres/stats_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=stats-db
-      - POSTGRES_USER=sdb
-      - POSTGRES_PASSWORD=password
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 5s
-      retries: 10
-
   comment-db:
     image: postgres:16.1
     container_name: comment-db

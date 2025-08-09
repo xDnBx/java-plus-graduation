@@ -14,4 +14,9 @@ public class RequestClientFallback implements RequestClient {
     public Map<Long, List<RequestDto>> getConfirmedRequests(List<Long> eventIds) {
         throw new ServiceUnavailableException("Request-Service is unavailable");
     }
+
+    @Override
+    public boolean isRequestExists(Long requesterId, Long eventId) {
+        throw new ServiceUnavailableException("Request-Service is unavailable");
+    }
 }

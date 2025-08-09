@@ -23,4 +23,6 @@ public interface RequestService {
 
     EventRequestStatusUpdateResult updateRequest(Long userId, Long eventId,
                                                  EventRequestStatusUpdateRequest updateRequest);
+
+    boolean isRequestExists(Long requesterId, Long eventId);
 }

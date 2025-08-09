@@ -97,7 +97,7 @@ public class EventFindSpecification {
             if (sortType != null) {
                 Path<?> sortField = null;
                 switch (sortType) {
-                    case VIEWS -> sortField = root.get("views");
+                    case VIEWS -> sortField = root.get("rating");
                     case EVENT_DATE -> sortField = root.get("eventDate");
                 }
                 Order order = criteriaBuilder.desc(sortField);

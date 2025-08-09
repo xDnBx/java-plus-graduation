@@ -9,14 +9,14 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import ru.practicum.grpc.stats.recommendation.*;
-import ru.practicum.handler.RecommendationHandler;
+import ru.practicum.handler.RecommendationsHandler;
 
 @Slf4j
 @GrpcService
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnalyzerController extends RecommendationsControllerGrpc.RecommendationsControllerImplBase {
-    final RecommendationHandler handler;
+    final RecommendationsHandler handler;
 
     @Override
     public void getRecommendationsForUser(UserPredictionsRequestProto request,

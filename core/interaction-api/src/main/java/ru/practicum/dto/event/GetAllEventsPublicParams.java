@@ -1,6 +1,5 @@
 package ru.practicum.dto.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.dto.event.enums.SortType;
@@ -23,5 +22,4 @@ public class GetAllEventsPublicParams {
     SortType sort;
     Integer from;
     Integer size;
-    HttpServletRequest httpServletRequest;
 }
