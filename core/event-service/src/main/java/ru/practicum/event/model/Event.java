@@ -54,5 +54,5 @@ public class Event {
     LocalDateTime publishedOn;
 
     @Transient
-    Long views = 0L;
+    Double rating = 0.0;
 }

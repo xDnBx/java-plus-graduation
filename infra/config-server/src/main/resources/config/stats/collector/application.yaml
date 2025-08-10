@@ -1,0 +1,22 @@
+server:
+  port: 0
+grpc:
+  server:
+    port: 0
+
+kafka:
+  bootstrap-servers: localhost:9092
+  topic: stats.user-actions.v1
+
+logbook:
+  format:
+    style: http
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: INFO
+    org.springframework.orm.jpa.JpaTransactionManager: INFO
+    org.zalando.logbook: TRACE

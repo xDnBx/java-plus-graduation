@@ -1,0 +1,51 @@
+grpc:
+  server:
+    port: 0
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6538/analyzer-db
+    username: adb
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+
+hibernate:
+  jdbc:
+    time_zone: UTC
+
+logbook:
+  format:
+    style: http
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: INFO
+    org.springframework.orm.jpa.JpaTransactionManager: INFO
+    org.zalando.logbook: TRACE
+
+user-action:
+  view: 0.4
+  register: 0.8
+  like: 1.0
+
+kafka:
+  bootstrap-servers: localhost:9092
+  group-id:
+    action: analyzer.actions
+    similarity: analyzer.similaritys
+  topics:
+    action: stats.user-actions.v1
+    similarity: stats.events-similarity.v1
+  auto-commit: false

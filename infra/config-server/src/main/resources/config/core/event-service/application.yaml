@@ -33,6 +33,3 @@ hibernate:
 logbook:
   format:
     style: http
-
-stats-server:
-  name: stats-server

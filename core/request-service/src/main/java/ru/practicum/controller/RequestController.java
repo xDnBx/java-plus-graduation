@@ -26,4 +26,10 @@ public class RequestController implements RequestClient {
         log.info("Request for confirmed requests for events = {}", eventIds);
         return requestService.getConfirmedRequests(eventIds);
     }
+
+    @Override
+    public boolean isRequestExists(Long requesterId, Long eventId) {
+        log.info("Request for checking request existence for requesterId = {}, eventId = {}", requesterId, eventId);
+        return requestService.isRequestExists(requesterId, eventId);
+    }
 }

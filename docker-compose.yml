@@ -1,21 +1,4 @@
 services:
-  stats-db:
-    image: postgres:16.1
-    container_name: stats-db
-    ports:
-      - "6543:5432"
-    volumes:
-      - ./volumes/postgres/stats_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=stats-db
-      - POSTGRES_USER=sdb
-      - POSTGRES_PASSWORD=password
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 5s
-      retries: 10
-
   comment-db:
     image: postgres:16.1
     container_name: comment-db
@@ -83,3 +66,52 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
+
+  analyzer-db:
+    image: postgres:16.1
+    container_name: analyzer-db
+    ports:
+      - "6538:5432"
+    environment:
+      - POSTGRES_DB=analyzer-db
+      - POSTGRES_USER=adb
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./volumes/postgres/analyzer-data:/var/lib/postgresql/data/
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  kafka:
+    image: confluentinc/confluent-local:7.4.3
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "9092:9092" # for client connections
+      - "9101:9101" # JMX
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      CLUSTER_ID: 'K0EA9p0yEe6MkAAAAkKsEg'
+
+  kafka-init-topics:
+    image: confluentinc/confluent-local:7.4.3
+    container_name: kafka-init-topics
+    depends_on:
+      - kafka
+    command: "bash -c \
+                'kafka-topics --create --topic stats.user-actions.v1 \
+                             --partitions 1 --replication-factor 1 --if-not-exists \
+                             --bootstrap-server kafka:29092 && \
+                kafka-topics --create --topic stats.events-similarity.v1 \
+                             --partitions 1 --replication-factor 1 --if-not-exists \
+                             --bootstrap-server kafka:29092'"
+    init: true
